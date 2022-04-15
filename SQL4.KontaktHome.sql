@@ -93,7 +93,7 @@ VALUES
 (@Id)
 END
 
-EXEC InsertProduct @id = 8
+EXEC InsertProduct @id = 4
 
 
 
@@ -108,8 +108,26 @@ END
 DROP PROCEDURE DeleteProduct
 
 
-EXEC DeleteProduct @Id = 2
+EXEC DeleteProduct @Id = 7
 
 
 
-SELECT * FROM GetProductDetails
+--5)Verilen Id'li product add olunduqdan ve silindikden sonra Cartin icindeki mehsullari gostermek(trigger yazin)
+
+CREATE TRIGGER FinalResult 
+ON Cart
+AFTER  INSERT, DELETE
+AS
+BEGIN
+SELECT	
+		p.Id,
+		p.Name as [Product Name],
+		p.Model,
+		p.CostPrice as [Cost Price],
+		p.SalePrice as [Sale Price],
+		ct.Name as [Category]
+FROM Cart c
+INNER JOIN Products p on p.Id= c.ProductId
+INNER JOIN	Categories ct on ct.Id = p.CategoryId
+END
+
